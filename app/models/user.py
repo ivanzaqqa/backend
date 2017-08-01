@@ -23,6 +23,10 @@ class User(db.Model, BaseModel):
 	last_name = db.Column(db.String)
 	username = db.Column(db.String, index=True, unique=True)
 	email = db.Column(db.String, index=True, unique=True)
+	role_id = db.Column(
+		db.Integer, db.ForeignKey('roles.id')
+	)
+	role = db.relationship('Role')
 	password = db.Column(db.String)
 	created_at = db.Column(db.DateTime)
 	updated_at = db.Column(db.DateTime)
@@ -39,7 +43,7 @@ class User(db.Model, BaseModel):
 
 	def generate_auth_token(self, expiration=6000):
 		s = Serializer(current_app.config['SECRET_KEY'], expires_in=expiration)
-		return s.dumps({'id': self.id})
+		return s.dumps({'id': self.id, 'role': self.role})
 
 	@staticmethod
 	def verify_auth_token(token):
