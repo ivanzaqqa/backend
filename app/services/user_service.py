@@ -96,12 +96,12 @@ class UserService:
 
     def get_user_photo(self, id):
         self.model_user_photo = db.session.query(
-            UserPhoto).filter_by(user_id=id).first()
-        url = ''
+            UserPhoto).filter_by(user_id=id)
         if self.model_user_photo:
-            url = request.url_root + 'static/' + \
-                self.model_user_photo.as_dict()['url']
-        return url
+            self.model_user_photo = self.model_user_photo.first().as_dict()
+            self.model_user_photo['url'] = request.url_root + 'static/' + \
+                self.model_user_photo['url']
+        return self.model_user_photo
 
     def social_sign_in(self, provider, social_token, token_secret=''):
         if (provider == 'google'):

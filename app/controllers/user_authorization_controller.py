@@ -33,7 +33,7 @@ class UserAuthorizationController(BaseController):
                     if user.verify_password(password):
                         token = userservice.save_token()
                         user = user.as_dict()
-                        user['url'] = userservice.get_user_photo(user['id'])
+                        user['photos'].insert(0, userservice.get_user_photo(user['id']))
                         # store user session for web app consumed
                         session['user'] = user
                         return BaseController.send_response_api({'access_token': token['data'].access_token.decode(), 'refresh_token': token['data'].refresh_token}, 'User logged in successfully', user)
@@ -58,7 +58,7 @@ class UserAuthorizationController(BaseController):
                 if user is not None:
                     token = userservice.save_token(provider)
                     user = user.as_dict()
-                    user['url'] = userservice.get_user_photo(user['id'])
+                    user['photos'].insert(0, userservice.get_user_photo(user['id']))
                     return BaseController.send_response_api({'access_token': token['data'].access_token.decode(), 'refresh_token': token['data'].refresh_token}, 'User logged in successfully', user)
                 else:
                     return BaseController.send_error_api(None, 'user is not registered')
